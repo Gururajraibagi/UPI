@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QR Codes</title>
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="main.css">
+    <style>
+      
+        div img{
+            width: 280px;
+            height: 280px;
+        }
+        input[type=text] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+}
+.button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+    </style>
+    <script src="qrcode.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Generating Code</h1>
+    </header>
+    <main >
+       <!-- using
+       https://davidshimjs.github.io/qrcodejs/
+       -->
+       <table align="center">
+        <th> Generate code</th>
+            <tr>
+                <td> <input type="text" id="amt" placeholder="Amount" name=""> </td>
+            </tr>
+            <tr>
+                <td> <input type="text" id="upi_id" placeholder="UPI ID" name=""> </td>
+            </tr>
+            <tr>
+                <td> <input type="text" id="name" placeholder="User name" name=""> </td>
+            </tr>
+            <tr>
+                <td> <input type="text" id="note" placeholder="Description" name=""> </td>
+            </tr>
+           
+       </table>
+       <div>
+        <table align="center">
+            <tr ><td>    <button type="button" class="button" onclick="generateQr(1);">Generate Qrcode</button></td>
+                <td>    <button type="button"  class="button" onclick="generateQr(2);">Generate Link</button></td>
+            </tr>
+        </table>
+       </div>
+
+       <br>
+        <div id="btn_output"><a id='a'></a></div>
+        <div id="output" align="center"></div>
+        <img src="" />
+
+    </main>
+
+    <script>
+        var amt,upi_id,name,note;
+             
+        function generateQr(n){
+            
+
+                document.getElementById("output").innerHTML="";
+                document.getElementById("btn_output").innerHTML="";
+                amt=document.getElementById('amt').value;
+                upi_id=document.getElementById('upi_id').value;
+                name=document.getElementById('name').value;
+                note=document.getElementById('note').value; 
+                
+
+                var uri = new URL("upi://pay?");
+                var search_params = uri.searchParams;
+                
+
+               
+                uri.searchParams.append('pa', upi_id);    //Payee VPA M upi id
+                uri.searchParams.append('pn', name);        //payee name
+                uri.searchParams.append('tn', note); //Transaction note providing a short description of the transaction. O
+                uri.searchParams.append('am', amt);  //Transaction amount in decimal format. If ‘am’ is not present then field is editable. M
+                uri.searchParams.append('cu', "INR"); 
+                uri.searchParams.append('url', encodeURI("https://www.google.com")); 
+
+
+                var res = encodeURI(uri); 
+                //console.log(amt.value+""+upi_id.value+""+name+""+note.value);
+                console.log(amt+""+upi_id+""+name+""+note);
+                //console.log(res);
+                console.log(uri.toString());
+
+                if(n==1){
+                    let qrcode = new QRCode("output", {
+                        text: uri.toString(),
+                         width: 177,
+                            //height: 177,
+                        //colorDark : "#000000",
+                        colorLight : "#ffffff",
+                        correctLevel : QRCode.CorrectLevel.H
+                    });
+                }
+                else{
+                    var mydiv = document.getElementById("btn_output");
+                    var aTag = document.createElement('a');
+                    aTag.setAttribute('href',uri.toString());
+                    aTag.innerText = "Click to pay";
+                    mydiv.appendChild(aTag);
+                   
+                }
+        }
+
+     
+        
+    </script>
+    
+</body>
+</html>
+
